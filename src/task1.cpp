@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <mutex>
 #include <sstream>
+#include <map>
 
 #define DISTANCE 100
 
@@ -79,6 +80,7 @@ void task1()
 {
     Swimmer* group = new Swimmer[6];
     std::vector<std::thread> swim;
+    std::map <std::string,int> results;
     for (int i = 0; i<6; ++i)
     {
         swim.push_back(std::thread(oneThreadSwim, &group[i]));
@@ -91,6 +93,7 @@ void task1()
     std::cout << "Leader board:" <<std::endl;
     for (int i = 0; i<6; ++i) {
         std::cout << group[i].getName() << " " << group[i].getTime() <<std::endl;
+        results.insert(std::make_pair <std::string,int> (group[i].getName(), group[i].getTime()));
     }
     delete group;
     group = nullptr;
