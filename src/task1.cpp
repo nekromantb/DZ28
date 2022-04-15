@@ -10,6 +10,9 @@
 
 #define DISTANCE 100
 
+std::map <std::string,int> results;
+std::mutex results_mutex;
+
 class Swimmer
 {
     double speed = 0;
@@ -42,6 +45,9 @@ public:
             outp << "Swimmer " << name << " finished race on " << sec << " second!" << std::endl;
             std::cout << outp.str();
             time = sec;
+            results_mutex.lock();
+            results.insert(std::pair <std::string,int> (name , time));
+            results_mutex.unlock();
             return true;
         }
     }
@@ -80,7 +86,6 @@ void task1()
 {
     Swimmer* group = new Swimmer[6];
     std::vector<std::thread> swim;
-    std::map <std::string,int> results;
     for (int i = 0; i<6; ++i)
     {
         swim.push_back(std::thread(oneThreadSwim, &group[i]));
@@ -93,7 +98,6 @@ void task1()
     std::cout << "Leader board:" <<std::endl;
     for (int i = 0; i<6; ++i) {
         std::cout << group[i].getName() << " " << group[i].getTime() <<std::endl;
-        results.insert(std::make_pair <std::string,int> (group[i].getName(), group[i].getTime()));
     }
     delete group;
     group = nullptr;
